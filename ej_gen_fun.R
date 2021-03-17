@@ -119,7 +119,7 @@ sum(is.na(deTable$ID.EntrezID))#nos da la suma de NA's en la columna de ID, es d
 
 
 
-
+#de aquí para aajo ya no me salió
 
 
 #4.-Genera una figura de volcán manualmente, comparando explicitamente logFC contra -log10(P.Value) e incluyendo todas las sondas
