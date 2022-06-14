@@ -1,0 +1,81 @@
+#!/bin/bash
+
+#Esta línea descarga el archivo requerido para el paquete de SRA Toolkit
+wget --output-document sratoolkit.tar.gz http://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/current/sratoolkit.current-ubuntu64.tar.gz
+
+#Para descomprimir y extraer el contenido 
+tar -vxzf sratoolkit.tar.gz
+
+#Generar una ruta a la cual van a ser exportados los datos
+#dependiendo de la versión puede ser que se cambie el nombre, igual del sistema operativo en uso
+export PATH=$PATH:$PWD/sratoolkit.2.11.0-ubuntu64/bin
+
+#corroborar sitio de salida
+which fastq-dump
+#debe de salir algo así 
+/Users/JoeUser/sratoolkit.2.4.0-1.mac64/bin/fastq-dump
+
+#uso de comando para configurar Toolkit
+#es necesario ver las indicaciones https://github.com/ncbi/sra-tools/wiki/03.-Quick-Toolkit-Configuration
+vdb-config -i
+
+
+#para probar
+fastq-dump --stdout SRR390728 | head -n 8
+#debe de salir esto
+#@SRR390728.1 1 length=72
+#CATTCTTCACGTAGTTCTCGAGCCTTGGTTTTCAGCGATGGAGAATGACTTTGACAAGCTGAGAGAAGNTNC
+#+SRR390728.1 1 length=72
+#;;;;;;;;;;;;;;;;;;;;;;;;;;;9;;665142;;;;;;;;;;;;;;;;;;;;;;;;;;;;;96&&&&(
+#@SRR390728.2 2 length=72
+#AAGTAGGTCTCGTCTGTGTTTTCTACGAGCTTGTGTTCCAGCTGACCCACTCCCTGGGTGGGGGGACTGGGT
+#+SRR390728.2 2 length=72
+#;;;;;;;;;;;;;;;;;4;;;;3;393.1+4&&5&&;;;;;;;;;;;;;;;;;;;;;<9;<;;;;;464262
+
+#para descargar las muestras del proyecto en sí mismo
+#ya se tenía un archivo de texto con todas, dsiponible en https://www.ncbi.nlm.nih.gov/sra?LinkName=bioproject_sra_all&from_uid=551019
+#lo tenía ya en mi carpeta de Genomica_funcional
+prefetch --option-file SRR_ACC_List.txt
+
+#para descomprimir los archivos SRA en fastq
+fasterq-dump --split-files 
+
+#para mover los archivos a mi carpeta de trabajo porque me los arrojó en Genomica_funcional
+mv *.fastq /mnt/c/Users/fotgo/OneDrive/Documentos/R/Genomica_funcional/pro_fin_genfun/
+
+#para tener una carpeta propia de los FASTQ y mover los archivos ahí
+#primero moverme a mi carpeta
+cd pro_fin_genfun/
+#crear la carpeta
+mkdir fastq_pro_fin_suelo
+#mover los FASTQ a la carpeta
+mv *.fastq /mnt/c/Users/fotgo/OneDrive/Documentos/R/Genomica_funcional/pro_fin_genfun/fastq_pro_fin_suelo/
+
+#para tener una carpeta propia de los FASTQ y mover los archivos ahí
+#primero moverme a mi carpeta
+cd pro_fin_genfun/
+#crear la carpeta
+mkdir fastq_pro_fin_suelo
+#mover los FASTQ a la carpeta
+mv *.fastq /mnt/c/Users/fotgo/OneDrive/Documentos/R/Genomica_funcional/pro_fin_genfun/fastq_pro_fin_suelo/
+
+####################
+#para descargar el archivo de taxa para los hongos se siguen los siguientes pasos obtenidos de https://zenodo.org/record/835855#.YK4BnqhKjIU
+####################
+#Format RDP taxonomic training set for DADA2
+#1  Wrangle the RDP trainingsets and unaligned data into the downloads folder by executing this from a terminal and move the file somewhere with >30GB free
+wget https://sourceforge.net/projects/rdp-classifier/files/RDP_Classifier_TrainingData/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata.zip
+wget http://rdp.cme.msu.edu/download/current_Fungi_unaligned.fa.gz
+#2  Unzip the trainingset file and replace Us with Ts in the fasta by executing in terminal
+awk 'NR%2==0 {gsub(/[uU]/,"T"); print} NR%2==1' /mnt/c/Users/fotgo/OneDrive/Documentos/R/Genomica_funcional/pro_fin_genfun/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/fungiLSU_train_012014.fa >  /mnt/c/Users/fotgo/OneDrive/Documentos/R/Genomica_funcional/pro_fin_genfun/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/fungiLSU_train_012014_lsu_fixed_v2.fa
+#3  Summon the dada2 pkg
+library(dada2);packageVersion("dada2")
+#4  Transform the DADA2 formatted training fastas, in R
+path.1<-" ~/R/Genomica_funcional/pro_fin_genfun/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/"
+dada2:::makeTaxonomyFasta_RDP(file.path(path.1, "fungiLSU_train_012014_lsu_fixed_v2.fa"), file.path(path.1, "fungiLSU_taxid_012014.txt"),"~/R/Genomica_funcional/pro_fin_genfun/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDP_LSU_fixed_train_set_v2.fa",compress=FALSE)
+dada2:::makeSpeciesFasta_RDP("~/R/Genomica_funcional/pro_fin_genfun/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/current_Fungi_unaligned.fa", "~/R/Genomica_funcional/pro_fin_genfun/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/rdp_species_assignment_LSU_v2.fa", compress=FALSE)
+#5 Make the compressed DADA2 formatted training fastas in gz and zip format
+dada2:::makeTaxonomyFasta_RDP("~/R/Genomica_funcional/pro_fin_genfun/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/fungiLSU_train_012014_lsu_fixed_v2.fa", file.path(path.1, "fungiLSU_taxid_012014.txt"),"~/R/Genomica_funcional/pro_fin_genfun/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDP_LSU_fixed_train_set_v2.fa.gz",compress=TRUE)
+dada2:::makeTaxonomyFasta_RDP("~/R/Genomica_funcional/pro_fin_genfun/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/fungiLSU_train_012014_lsu_fixed_v2.fa", file.path(path.1, "fungiLSU_taxid_012014.txt"),"~/R/Genomica_funcional/pro_fin_genfun/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDP_LSU_fixed_train_set_v2.fa.zip",compress=TRUE)
+dada2:::makeSpeciesFasta_RDP("~/R/Genomica_funcional/pro_fin_genfun/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/current_Fungi_unaligned.fa", "~/R/Genomica_funcional/pro_fin_genfun/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/rdp_species_assignment_LSU_v2.fa.gz", compress=TRUE)
+dada2:::makeSpeciesFasta_RDP("~/R/Genomica_funcional/pro_fin_genfun/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/current_Fungi_unaligned.fa", "~/R/Genomica_funcional/pro_fin_genfun/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/RDPClassifier_fungiLSU_trainsetNo11_rawtrainingdata/rdp_species_assignment_LSU_v2.fa.zip", compress=TRUE)

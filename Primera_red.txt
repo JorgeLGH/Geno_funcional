@@ -1,0 +1,6 @@
+#primera_red
+
+targets, factors
+v1, v1 | ! v3
+v2, v1 & v3
+v3, v2
