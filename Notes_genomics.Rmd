@@ -3,12 +3,14 @@ title: "Notes Functional Genomics"
 author: "Jorge"
 date: "1/15/2021"
 output:
+  html_document: 
+    theme: journal
+    toc: yes
   pdf_document: default
-  html_document: default
 ---
-### Notes
+#Notes
 
-## Introduction
+# Introduction
 
 The impact of network science has been at a global scale, not only on biological sciences or science itself. In recent years, there has been boom around the network sciences. The usefulness of network sciences has had an impact in economic, social, scientific, and many other areas. At first, the armies were the first investors in the develpoment of networks in order to avoid terrorist attacks in their countries.
 
@@ -30,17 +32,17 @@ It refers to something that is interconnected with many other objects, it has ma
 
 -Edges: 
 
-## Network architecture, topological properties
+# Network architecture, topological properties
 
-# Degree, Average Degree and Degree distribution
+## Degree, Average Degree and Degree distribution
 
-# Degree:
+## Degree:
 
 -Select a node, is the number of connections each node has. It is expressed as Ki, where i is the number of the node itself.
 
 -Es una propiedad local
 
-# Aveage Degree:
+## Aveage Degree:
 
 -Número de conexiones promedio que tiene la red completa.
 
@@ -48,7 +50,7 @@ It refers to something that is interconnected with many other objects, it has ma
 
 -Es una propiedad global, es decir, de toda la red.
 
-# Degree Distribution:
+##Degree Distribution:
 
 -Se calcula con un histograma
 
@@ -56,11 +58,10 @@ It refers to something that is interconnected with many other objects, it has ma
 
 -Redes complejas tienen una distribución diferente, muchos que no tienen dmasiadas conexiones, pero hay unos cuantos que tienen muchas (hubs). Son una distribución de cola larga.
 
-#######here an exercise and formulas
 
-## Representar una red
+# Representar una red
 
-# Adjancy matrix
+## Adjancy matrix
 
 -Podemos calcular con mayor facilidad
 
@@ -68,7 +69,7 @@ It refers to something that is interconnected with many other objects, it has ma
 
 -Es una matriz cuadrada. Definimos entrada, Mij, i puede ser cualquier entrada y j el nodo a evaluar. Ej. M12, el nodo uno conecta con el nodo dos? si hay un 1, entonces si, si hay un 0 entonces no.
 
-### Undirected network
+# Undirected network
 
 -Dirección no importa, las conexiones son en ambas direcciones. Si A se conecta con B, entonces B se conecta con A. Es lo mismo decir A-B, que B-A. 
 
@@ -76,7 +77,7 @@ It refers to something that is interconnected with many other objects, it has ma
 
 Ej: Red de actores, de co-autores, de co-expresión de genes
 
-### Directed networks
+# Directed networks
 
 -Importa la dirección de la relación.
 
@@ -84,7 +85,7 @@ Ej: Red de actores, de co-autores, de co-expresión de genes
 
 -Ej. Seguidores en Twitter, citas de artículos, red de regulación de genes
 
-### Weighted networks
+# Weighted networks
 
 -Damos pesos, no ponemos que son forzosameente relaciones recíprocas o no.
 
@@ -93,13 +94,13 @@ Ej: Red de actores, de co-autores, de co-expresión de genes
 -Ej. Redes de correlación de organismos, red probabnilística Booleana.
 
 
-## Real Networks are Sparse
+# Real Networks are Sparse
 
 -Redes biológicas no tienden a estar 100% conectadas
 
 -Las conexiones biológicas se laejan mucho del número totla posible de conexiones.
 
-## Bipartite networks
+# Bipartite networks
 
 -Dos clases de nodos distinguibles.
 
@@ -110,7 +111,7 @@ Ej: Red de actores, de co-autores, de co-expresión de genes
 -Puede haber tripartitas y así
 
 
-### Exercises to try and figure out the gist of igraph
+# Exercises to try and figure out the gist of igraph
 ```{r}
 library(igraph)
 g_1<-make_empty_graph(n=10, directed = T)#make an empty network
@@ -166,7 +167,7 @@ plot(make_kautz_graph(2,3))
 heatmap(adj_mat, Rowv=NA, Colv="Rowv")
 ```
 
-## First exercises with friends network
+# First exercises with friends network
 ```{r}
 library(igraph)
 fr<-read.csv("RedDeAmistadesGF2021Nombres - Hoja 1.csv")
@@ -186,28 +187,26 @@ hist(degree(red_1,mode="in"), col=c(1:length(hist(degree(red_1, mode="in")))))
 hist(degree(red_1,mode="out"), col=c(1:length(hist(degree(red_1, mode="out")))))
 ```
 
-## Paths and Distances
+# Paths and Distances
 
-# Paths
+## Paths
 
 Son trayectorias de un nodo a otro. Caminos de los nodos conectados desde uno a otro, son selecciones arbitarias. Es una propiedad local. En caso de redes no dirigidas no hay problemas, pero en redes dirigidas hay que mantener las direcciones
 
-# Shortest paths (Distances)
+## Shortest paths (Distances)
 
 Es la menor cantidad de pasos/conexiones que te pueden llevar de un punto a otro mediante las conexiones.
 
-# Average distances
+## Average distances
 
 A partir de un nodo arbitrario, determinar la distancia de todos los nodos y hacer el promedio de dichas distancias. Es una propiedad global.
 
-# 
 
-
-# Clustering coefficient
+## Clustering coefficient
 
 Ver si a partir de un nodo conectado con otros, hay conexiones entre los nodos que se conectan. De 0-1. #Recordar ver la fórmula# n(n-1)/2
 
-## Second exercises with friends network
+# Second exercises with friends network
 ```{r}
 library(igraph)
 
@@ -234,6 +233,7 @@ shortest_paths(red_1,1,6)
 all_shortest_paths(red_1, 1,2:6)
 ```
 
+#Properties
 
 ## Scale-Free property
 
@@ -255,59 +255,59 @@ Existen caminos que pese a remover nodos o algunas conexiones, las conexiones re
 
 Es la medida de importancia de los nodos, su centralidad en cuestión de la estrucutra de la red. Aunque al parecer también se puede referir a literalmente estar en el centro de la estructura de la red. Haydiferentes modos de medir la centralidad, y cada método mide diferentes cosas para obtener su valor de centralidad. Por ejemplo, puede medirse la centralidad en relación a las conexiones que tiene un nodo. Dependiendo de lo que queremos saber, es el modo de calcular centralidad que se usa.
 
-# Degree centrality
+### Degree centrality
 Es en cuanto lamedida de conexiones que posee el nodo.
 
-# Eccentricity
+### Eccentricity
 Es la medida de distancia que tiene con un centro cualquier nodo. Consideras la disntancia máxima de cada nodo, el nodo central va a ser el que tenga una distancia máxima menor, es decir, el menos excéntrico.
 
-# Closeness centrality
+### Closeness centrality
 Medimos el que tiene distancias más cercanas. Calculamos la distancia de los nodos al resto, tomamos los valores más pequeños y les sacamos la inversa. 
 
-## Communities
+# Communities
 Redes tienden a formar comunidades/clusters. Pertenencia a un cluster significa que está más conectado con los elementos del cluster que con el resto, pero esto no significa que no puedan estar conectados.
 
-# Definiciones de comunidades:
+## Definiciones de comunidades:
 
-#Cliques:
+## Cliques:
 Subcomunidades dentro de una comunidad quee están muy unidos, con coeficiente de clusterización de 1 o cercano. Pueden estar conectados con más nodos dentro de la comunidad, pero son un pequeño grupo alatamente interconectado. 
 
-#Strong communities/cluster:
+## Strong communities/cluster:
 Subgrafo  cuyos nodos están conectados entre los mismos nodos de la comunidad, más que con miembros de otra comunidad.
 
-## Métodos de clusterización
+# Métodos de clusterización
 
-#Edge betweenness:
+##Edge betweenness:
 Qué tan en medio están las conexiones
 #Label propagation:
 Es estocástico, tener cuidado. Es por propagación por cercanía con los vecinos
 
-## Mundo ultra pequeño
+# Mundo ultra pequeño
 
 El diámetro de las redes es relativamente pequeño, es decir si va aprox log(log(#de nodos)). En redes biológicas es muy presente debido a redundancias y niveles de conexión que tienen los nodos.
 
-## Motifs
+# Motifs
 
 Son motivos. Son subgrupos de una red que aparecen más de lo que deberían de aparecer por azar. Elementos recurrentes que en una red al azar no deberían de ocurrir. Tienen una razón detrás de esos motivos, el ejemplo de de arreglos de tres en regulaciones trasncripcionales. Los motivos están presentes y han evitado desaparecer conforme el paso del tiempo.
 
-## Interactoma
+# Interactoma
 
 Es el conjunto de todas las proteínas y sus interacciones
 
-## Red de interacción proteína-proteína (PPI)
+# Red de interacción proteína-proteína (PPI)
 
 Los nodos son proteínas, las conexiones es si hay interacción entre ellas, es una red no dirigida. La información para formar estas redes es con base en cristalografía de rayos X, NMR, Tandem Affinity Purification, Coinmunoprecipitación, Yeast two-Hybrid (Y2H, es de las más comúnes de hacer). Estas redes las encontramos en distintos sitios (Aparecen en las diapos), una de las más completas es "STRING". Casi siempre nos vamos a referir a qué tanto interactúan proteínas.
 
-# ¿Para qué sirven?
+## ¿Para qué sirven?
 Saber si las interacciones son estables y se forman complejos proteicos; saber si son de interacciones transitorias y breves que generan modificaciones en alguna proteína (son lo más dinámico del interactoma). Podemos asignar roles a proteínas cuya función era desconocida (es teórico, requiere comprobarse), añadir detalles cerca de los pasos en una vía de señalización, caracterizar complejos de proteínas.
 
-# Propiedades topológicas
+## Propiedades topológicas
 Son free-scale (cola larga, igualmente robustos), son de mundo ultra-pequeño (distancia va aprox log(log(nodos))). Los módulos son unidades funcionales *Checar bien esta parte*
 
-## Redes de co-expresión
+# Redes de co-expresión
 Hay distintos tipos de redes de genes, y pueden ser pesadas, direccionadas, sin direccionar, etc. En este caso de co-expresión, se refiere a que los perfiles de expresión son parecidos, por ejemplo, los microarreglos y la intensidad de luz que da la intensidad de expresión. Se presentan niveles de expresión no similares, pero que su comportamiento es parecido, suben y bajan por así decirlo al mismo tiempo; pero no forzosamente al mismo nivel. Una medida es ver el nivel de correlaciones de expresión, se da en matrices de correlación. Entre más sea cercano el valor a uno, pues están correlacionados, cuando están cerca de menos uno están anticorrelacionado, si es cercano a 0, no tienen correlación; es obvio. El punto en el que decidimos si está correlacionado o no, es arbitrario. Se puede usar entropía de Shannon, donde sé datos de mi variable x, cuánto me da de información de y; debe de dar variables mayores a 0, pero puede ser a infinito. Algorito ARACNE es para información mutua de genes. Las redes de co-expresión son no dirigidas.
 
-## Redes dinámicas de genes/ Redes booleanas (bipartitas)
+# Redes dinámicas de genes/ Redes booleanas (bipartitas)
 
 Nodos son genes y las conexiones son el producto de los genes que a su vez pueden regula transcirpción. Pueden activar o inhibir. Las dos clases son los genes y los productos como tal. Basado en álgebra Booleana. Tres operadores básicos que unen proposiciones, que establecen valores de verdadero o falso no ambiguos. AND|OR|NOT. Los operadores forman las proposiciones. Las tablas de verdad, vienen los valores que pueden tener. Son redes dinámicas basadas con operadores AND, OR, NOT. Vemos en tiempos discretos los atractores de la red y corroboramos con observaciones.
 
@@ -315,35 +315,36 @@ Nodos son genes y las conexiones son el producto de los genes que a su vez puede
 
 Nodos son genes, conexiones son de regulacipon con dos signos, activar o inhibir. Usamos operadores booleanos en las redes. Tantas funciones booleanas como nodos; debemos de poner las condiciones que activan a los nodos. Genes activos con base en los niveles de expresión, se dan condiciones de prendido y apagado con las relaciones, son 0´s y 1´s. Las interacciones son dinámicas, y permite elucidar comportamientos dependiendo del estado activo o inactivo de algunos de los nodos. Número posible de estados de la red es 2^N. Cuando después de las iteraciones, la red parece alcanzar un estado estable en la activación e inactivación de sus nodos, se llama equilibrio, se va a ATRACTORES (pueden ser puntiales o cíclicos). Es parecido a lo que hacíamos en mate con los puntos de equilibrio. Cuenca de atracción: path de estados que llevan al ataractor. Requerimos una lista de genes, preferentemente con actividad comprobada, y ponemos 
 
-## librería de wgcna
-
-## Microarreglos
+# Microarreglos
 
 Microarreglos de expresión. Medimos la expresión de muchos genes de modo simultáneo. Era una técnica hace 15 años muy novedosa e importante, hoy ya no tanto. Tiene varias desventajas y por eso está en desuso. Una placa de plástico con sondas y se usaba para medir fluorescencia en caso de la presencia, pero dependía del contenido de DNA en la placa. La idea era que cada pozo de la placa fuera una región de DNA y su hibridación con nuestramuestra, nos arrojaba fluorescencia para nosotros medir la expresión. Se obtenía una imagen con los colores para posteriormente trasladar los valores de fluorescencia a valores de expresión. Ya no está en uso. Se usaban en distintos modos, como ver la expresión de genes de dos (o más) condiciones, referencia y experimental; también para casificar molecularmente enfermedades, identificar genes característicos de una patología, predicción de respuesta de tratamientos, ver SNP's. Ponemos DNA en sonda, nuestro RNA lo agregamos y por complementariedad van a emitir luz. Hay que normalizar los datos y hacer contabilización, esto para que pueda ser medible en mismas condiciones y ver estadísiticamente si hya cambios en la expresión o no. 
-#¿Cómo medir cambios? 
+
+## ¿Cómo medir cambios? 
 1.-Establecer una condición de referencia y comparar. Se cuantifica de varios modos; la más sencilla es restarle el cambio a la condición de de referencia (da un valor y da el signo de cuál es la diferencia, pero no señala realmente una diferencia estadística). Es por esto que se puede calcular con "fold Change" C(cambio)/R(referencia), que nos arroja la magnitud del cambio, no da negativos, pero si es menor expresión, el valor es menor que 1. 
 2.- Log fold-change, es sacar el logaritmo del valor del fold-change. se hace log2(C/R), se hace con base 2 el logaritmo. Cuando el resultado es de 1, significa que se expresó el doble respecto la condición de referencia; cuando es de 2, se expresó 4 veces más y así. En este caso, cuando la expresión es menor, si te arroja los signos.
-#¿Cómo medir diferencias estadísticas?
+
+## ¿Cómo medir diferencias estadísticas?
 Lo representamos visualmente con un volcano plot. Tiene dos ejes, en x=logFC (log fold-change, en positivos son los de mayor cambio positivo, los negtivos significa que hubo cambio pero de menor expresión (genes sobreexpresados y los subexpresados)), en y=-log10(Pvalue) (nos dice la significacnia estadística de los valores, entre más chico el valor, mejor, por eso el -log, para que nos de #'s positivos más grandes). La mayor parte de los genes no cambian mucho entre las condiciones, entonces van a estar cercanas al 0 en x; en y deben de estar por arriba de un umbral, donde el p value nos dice que son significativos. Nos interesan los que más se alejen de 0 en x y que mayor valor tengan en Y.
 
-## RNA-seq
+# RNA-seq
 La tecnología de seuenciación. Mide expresión de muchos genes de manera simultánea. NGS (next generetaion sequencing). Expresiones del transcirto. Hay muchas NGS, tdas terminan con sufijo -seq; hoy en día son las tecnologías estándar para trabajar. Nos permite medir niveles de expresión de genes (lo más común), podemos describir todo lo que se transcribe, no solo lo que se traduce, caracterizar splicing alternativo y poliadenilación. Usamos un transcriptoma de referencia, nuestras lecturas que se mapean en el transcriptoma de referencia (usamos lecturas de 100 bases aprox) y se ve a qué región del genoma corresponde esa expresión; se va alineando. Los microarreglos daban imagen e interpretábamos intensidad de luz, ahora son las abundancias que mapean estos transcritos; son el número de repeticiones de fragmentos que mapean en la misma zona, aunque no deben de ser idénticos.
 Pipeline general: pregunta biológica, preparación de los RNA's (aislar y purificar), preparar las bibliotyecas (cDNA en lugar de RNA y se agregan lso adaptadores), secuenciar, análisis de los short-reads. Es más snesible a los genes más y menos expresados que otros métodos; tiene menor ariación técina y aumenta su reproducibilidad, podemos descubrir nuevas regiones de expresión, expresión de splicing alternativo, expresión de un alelo específico, no tenemos dependencia de los probes en sonda, no necesitamos saber ni el genoma ni transcriptoma de manera previa forzosamente.
 Se puede hacer análisis cuantitativo y cualitativo. Cualitativo: identificar sitios expresados, fronteras intrones y exones. sitios de transcripción, etc. Cuantitativo: medir difernecias de expresiónn, de splicing, etc.
-#expresión diferencial de genes:
+
+## expresión diferencial de genes:
 Mayor uso de RNA-seq. Métodos de análisis que permiten determinar cuantitativamente los cambios en los niveles de expresión de genes experimentales. Los pedazos de secuencia que leemos se llaman reads, casi todas son de lecturas cortas (hasta 500 pb, 100-300 es lo común), representan el mRNA fragmentado, se apunta a lecturas más largas para mayor seguridad de estar en la sección que se cree dentro del DNA. Hay algunas tecnologías que dejan hasta 1000 pb y esta con mayor seguridad y menos ambigüedad, son de lecturas largas. Podemos alinear con base en el genoma conocido, entonces está como herramienta de ver qué regiones se expresan y su frecuencia; pero igual podemos hacer un mapeo de genoma basado en algún genoma relacionado que sirva de como templete.
 El repositorio de estos archivos es SRA.
 
-#Alineamiento/mapeo
+## Alineamiento/mapeo
 Ver en qué región del genoma caen nuestras lecturas, cuantificar las abundancias de expresión. El mapeo es lo más costoso computacionalmente y es tardado.
 
-##Expresión de abundancia normalizada de reads/lecturas
+## Expresión de abundancia normalizada de reads/lecturas
 Se debe de normalizar las abundancias debido a la longitud de los genes, porque más reads caen dentro de ese gen. Un modo común de normalizar es basado en la longitud del gen o del transcrito, contamos reads y su longitud. Hay varias herramientas para el mapeo. 
 Línea de flujo de trabajo. Partimos de nuestro archivo FASTQ que contiene las lecturas de la secuencia y la calidad de la secuencia. Luego alineamiento o pseudo-alineamiento que realmente son más usados, luego cuantificamos, normalizamos y obeetnemos nuestros modelos.
 FASTQ, es archivo de texto plano parecido al FASTA. Se producen por tecnologías de secuenciación, nos pone Q por quiality. Arranca con un caracter, que será @ en lugar de >, que señala un identificador; luego pone la secuencia de las lecturas cortas, peroluego tiene dos líneas adicionales. Viene un "+" que diferencia las líneas, luego viene una extra que tiene el mismo número de caracteres que la secuencia, cada signo nos menciona la calidad de la secuencia. En total debe haber un mínimo de 4 líneas, el identificador, la secuencia, el signo +, y la línea con los indicadores de la calidad. El modo de leer los identficadores de la calidad es mediante software, no es realmente parte de leerlo. Se usa la calidad QPHRED, se usa fórmula para medir la calidad, te mide el porcentaje de error, cuántaas veces se equivoca en teoría. es -10xlog10(Pe). Debe de haber un valor de 28-30 de calidad PHRED para que se considere aceptable.
 Usamos software para hacer corte de calidad de las secuencias.
 
-# Uso de kallisto
+## Uso de kallisto
 Kallisto es un pseud-alineador que nos ayuda a medio alinear las secuencias que obtenemos de los rnaseq. Tenemos nuestras lecturas y un genoma o transcriptoma de referencia, con este pseudo-alineamiento vamos teniendo una idea de qué regiones son las expresadas y su abundancia. Antes de esto, debemos de hacer la limpieza de nuestras secuencias, hacer los cortes de la secuencia que no nos sea útil, es el filtrado de calidad.
 Para anlizar la expresión diferencial necesitamos los archivos fastq de lecturas de condiciones experimentales y las de referencia, necesitamos un transcriptoma de referencia y la anotación del transcriptoma.
 Debemos de generar un archivo de índices, es decir "marcar" en dónde están los transcritos, para ello se utiliza el transcriptoma de referencia (obtenemos un archivo de índices). Estamos marcando en qué regiones queremos hacer que nuestros reads caigan, como decirle por qué regiones cae corresponde a qué transcrito. Marcarle las áreas donde puede caer. "kallisto index -i "nombrequequiera" -o "archivodelcualvamosasacarlareferencia"
@@ -355,3 +356,111 @@ Parecido a GEO pero con datos de RNAseq. Los archivos tienen fastQ.
 
 # Ontología de genes
 Ya tenemos nuestros genes y ya sabes si están sobre o subexpresados.¿Cómo hacer la historia, la ontología? Vamos a hacer análisis de categorías de los genes diferencialmente expresados, establecemos el criterio para saber si está sub o sobre representado, no confundirse con expresión. Es una prueba estadística binomial. Probabilidad de los estados, son dos, pero no son .5 y .5 forzoso, necesitamos número de réplicas y número de veces que queremos que se caiga en el estado deseado; calculamos probabilidad de los eventos. Después de cuantificar las probabilidades, ya nos podemos referir a conceptos de enriquecimiento o sobre representación, es decir que aparece un mayor número de veces respecto a lo esperado; ecnontramos conjuntos más enriquecidos, están enriquecidos justo porque no aparecen al azar, están en mayor proporción de lo que el azar estipula. Agrupamos en un concepto general, los ponemos en una categoría, para siempre referirnos a una misma cosa. Repres
+
+# Ejercicio con galaxy
+Usamos fastqc, luego trimmomatic, luego va kallisto pseudo y metemos el genoma de referencia para poder hacer el pseudoalineamiento. Podemos escoger si son pareados o si solo son una hebra. Después ya usamos el kallisto quant para cuantificar
+
+# RNA-seq
+Normalmnete nos vamos a referir al "bulk" rna-seq, no tanto al single cell. En este caso hacemos lo de kaillisto y todo lo que venía antes. Ahora, con el single cell rna-seq, podemos ver la expresión de un gen en una sola célula, no tanto en el cnjunto total de una muestra; es relativamente nueva y parece ser que se usará bastante en un futuro. Usamos secuenciación, mapeo, conteo de lecturas, y ya medimos los niveles de expresión diferecial. Para el single cell es pesado computacionalmente, además que es caro, entonces todavía no es tan común. Hay otra variante de rna-seq, llamada spatial rna-seq, la cual contempla la expresión de genes en regiones específicas de los tejidos; es decir, podemos ver espacailmente las diferencias de expresión en regiones completas y te dice dónde se expresa, a diferencia de la de bulk y single cell. 
+
+## Bulk RNA-seq
+Promedio de las expresiones de un tejido/órgano completo. Se ve de todas las células y de todas las partes a la vez, no hay separación como tal.
+
+## Single cell RNA-seq
+Es una tecnología que permite la ver la expresión génica a resolución de una sola célula a la vez. Nos permite determinar expresión diferencial de igual modo. Existen una variedad de técnicas para obtener la resoluciónde una sola célula, como dilución limitante, capilar guiado por miscroscopio, microdisección por captura láser, flow-activated cell sorting, microfluidic technology, microdroplet-based microfluids (las de inglés son de mayor output, pero  mantienen la resolución de una sola célula). Se capturan las céluls independientes (expos de compañeros), procesar datos, control de calidad (importante para hacer el corte de los datos), normalización (hacer comparables los reads), imputación (selección de atributos), reducción de dimensiones (integración de conjuntos de datos; dentro de esto igual debemos de determinar qué expresión corresponde a qué célula).
+
+### Desafíos
+Aislar las células como tal. Amplificaciones que estén más amplificadas por PCR, no que se estén expresando más como tal.
+
+### Pipeline
+Definir el diseño experimental para contestar una pregunta biológica, pre-procesado de datos (procesado de las muestras y secuenciación, alinear a transcriptoma de referencia de cada célula, cuantificación), construcción en R (se hacen matrices con cientos de condiciones y variables que representan a los genes de modo que pueda representar todos los datos), procesamiento de datos (control de calidad, normalización, selección de muestras con criterios específicos, integrar en matrices los datos, disminuir las dimensiones para poder ineterpretar los datos), clusterizar, medir expresión diferencial (puede variar entre qué comparas, grupos o incluso células), análisis de tryectorias (ver cómo van cambiando los perfiles de expresión basado en las diferentes condiciones que se está evaluando, incluso el tipo de célula que se está evaluando), anotación, visualización interactiva de los datos que se obtuvieron, reporte de lo que se ha generado.
+(Pre-procesamiento, control de calidad, normalización, imputación(creo que es lo de pasarlo ya a la parte de matrices para poder dar el procesamiento), slección de atributos, reducción de dimensiones, integración de conjunto de datos)
+
+#### Diseño experimental
+No podemos considerar que las células son réplicas de forma independiente, esto ya que se considera a las células como indpendientes, por lo que son una muestra en sí misma. Se necesitan controles positivos y negativos.
+
+#### Pre-procesamiento de datos
+Igualmente se empieza con un archivo FASTQ, se hace un análisis de calidad, igual tiene las 4 líneas para indicar las calidades. Cada archivo de FASTQ con todas las lecturas van a contar como una sola réplica. Usamos FASTQC. Alineamos contra nuestro trasncriptoma de referencia o lo más cercano filogenéticamnete cercano que esté documentado. Cuantificación por célula y por cada gen, cada una de estas se ursará para la parte de la generación de la matriz de cuentas de expresión. Las herramientas que se utilizan son CellRanger para datos 10x, scPipe para CEL-Seq2 y otros tipos de datos, y Kallistto y alevin para datos de droplets.
+Los datos (De cuentas de genes) se ven en una columna todos los genes, y las otras columnas son el número de células; entonces el número de renglones será con base en el número de transcritos que se tengan. (De la info de las células) Además se puede tener otra matriz con los identificadores de las células en una sola columna, el identificador en de cada una en troa columna, el Donor (de dónde vino), otras característias y el tratamiento de cada una de ellas. Para la información de genes tenemos la columna de los genes, columnas de indentificadores (Ensemble, símbolo, etc.), posición en cromosomas, etc. 
+Luego hacemos la normalización de los datos y se dan ciertas correcciones que sean necesarias.
+La única forma de integrar los datos es mediante la reducción de dimensiones debido al tamaño tan gigante de los datos que se tiene. Un modo de reducción que está en moda es la herramienta t-SNE.
+
+#### Procesamiento de datos
+
+##### Procesamiento de datos : QC
+Queremos eliminar datos/células que hayan suifrido daño durante la disociación, células con poca cobertura (el RNA se perdió, se degradó, etc, de modo que no es útil) o aquellas células ausentes y los doublets que son células que no se pudieron separar y por lo tanto no son útiles en sigle-cell. Se ven estos errores cuando hay células con bajas cuentas totales, células con genes poco expresados (experiencia), alta proporción de lecturas mitocondriales, células con alta proporción de **spike-ins**.
+Si no se hace correctamente vamos a hacer interpretación de algo que no representa un fenómeno biológico, poblaciones heterogéneas que sean solo ruido, genes super expresados que no signifiquen nada.
+
+##### Procesamiento de datos : Normalización
+Hacer homogéneas el número de lectruas para que realmente nos de información. Existen varios métodos (dijo que eso no lo iba a hacer en este momento).
+
+##### Procesamiento de datos : Imputación
+Necesario para vencer el reto de escasez de datos (los ceros). Hay regiones en los que caen pocas lecturas, o en algunas condiciones simplemente no hay hits con los reads, entonces necesitamos saber de dónde surgen y cómo vencerlos. Ver si son ceros realmente o si hay algún probelma. Para solucionar hay inferencias Bayesianas o incluso modelos de Markov para tomar en cuenta los 0´s.
+
+##### Procesamiento de datos : Selección de atributos
+De los metadatos definir qué es lo relevante, de lo cual podemos sacar información. Qué características son las que nos explican la variación entre nuestras condiciones y las réplicas. Reducimos nuestro tamaño del **dataset**. Otros factores solo nos daan ruido.
+
+##### Procesamiento de datos : Reducción de dimensiones
+El objetivo es identificar los grupos de células parecidos y clusterizarlos con base en su perfil de expresión que sean parecidos. Los datos tiene  demasiados atributos con mucha información, por lo que eso es un problema en cuestión de que casi cualquier factor eleva la cantidad de información que se tiene de forma sustancial. Queremos reducir para después ver qué características explican más de parte de esta clusterización, se puede usar el PCA, pero también el t-SNE, que es T-distributed stochastic neighbor embedding (t-SNE); también el UMAP. Tdas estas últimas se puede hacer para la reducción de diemnsiones.
+##### t-SNE
+Primero determina la similitud entre los conjuntos de datos que forman una réplica; por ejemplo, la distancia entre un punto de referencia y el de interés se mide, luego se pone contra una curva de distribución estándar que tiene como centro la medida de nuestro punto de referencia, después, se saca una línea que mide la distancia desde el punto de interés hasta el punto de la curva estándar en la que cae, lo cual representan la **unscaled similarity**. Calculamos del mismo modo todos los puntos respecto a nuestro punto de referencia, que realmente es el que nos interesa, de modo que los puntos más cercanos van a tener valores mucho más cercanos en la curva estándar, mientras que los más lejanos tienen valores que se alejan de la medida del de interés. Esto se hace ahora con todos los puntos y se mide los **unscaled similarity** para todas las posibles combinaciones de pares, de modo que todos los puntos de datos que tenemos en algún punto son el de referencia, es decir, el de nuestro interés.
+Después proyectamos los datos en una representación unidimensional y hacemos exactamente lo mismo con todos los puntos, pero ahora en lugar de usar una distribución normal, usaremos la "t". Como va a ser iferente de la original en la cual se clusterizan los datos adecuadamente, en el plano unidimensional va a ir moviendo los punto poco a poco de modo en que se parezca cada vez más a los datos que obtuvimos con un plano multidimensional. Se usa la distribución estándar porque si no, los datos estarían encimados de modo que no se podrían distinguir los clusters que se forman.
+
+#### Análisis de trayectorias
+Vemos las distintas trayectorias de las células, vemos en ejes del espacio y tiempo. Vemos cómo va cambiando la expresión de los genes con base en el avance espacial de las células contiguas y se ve la velocidad con la que se están generando los cambios de expresión.
+
+## Spatial RNA-seq
+Apoyado, basado en single-cell para determinar expresión de regiones específicas de los tejidos; se hace de varias células como unidades individuales, pero las organizamos para ver la expresión de cada región del tejido que se está tomando en cuenta. Técnica emergente, pero todavía no está es tan frecuente y es bastante caro computacionalmente y económicamente (en relación del single-cell).
+
+# Análisis de microbioma
+Microbioma=/=Metagenómica.
+Metagenómica. Abarca un panorama que está relacionado a este, lo cubre. En etse caso es de un conjunto de genes de todo loq ue podamos encontrar en una muestra ambiental; o al menos esa fue de las primeras definicione. Es ver los genes, qué organismos los tienen y tratar de saber qué fnción tienen cada uno de estos. En cuanto a una definición más actual, metagenómica se refiere a una de las técnicas de genómica moderna al estudio de *comunidades* de microorganismos *directamente en sus ambientes naturales*, sin necesidad de aislado y cultivo en laboratorio de especies individuales (Pachter). En cuanto al contexto de las muestras ambientales analizadas, este es el siguiente gran boom que está impactando gran parte de la microbiología; pues definimos parte de las comunidades a partir de muestras ambientales. 
+Básicamente se quieren responder 3 preguntas cuando se hacen análisis de metagenómica. Una es determinar qué organismos están presenten en la muestra, qué organismos componen parte de esta comunidad; aunque se ha centrado más que nada en bacterias, aunque solo describir qué organismos lo componen es difícil de publicar. Otra de estas preguntas es qué están haciendo, esto relacionado a su función dentro de las comunidad que forman parte, por ejemplo, tratar de inferir metabólicamente el papel de cada uno de los organismos. La última pregunta es cómo están llevando a cabo los papeles como tal que desempeñan. 
+Hay distintas aplicaciones como discuir el rol de cada microorganismo tanto individual como en conjunto para mantener balances ecológicos y atmosféricos como en fotosíntesis, generación de gases de invernadero, estudio de cadenas tróficas. En general, hay muchas cuestiones actuales relacionadas con el amb ambiente, incluso bioremediación, tratamiento de aguas, generación de productos, limpieza de agentes tóxicos, generación de energía, de etanol, cuestiones nutricionales humanas, estudio de enfermedades complejas, descubrimeinto de fármacos, medicina preventiva, etc.
+A partir de muestras ambientales se identifican a los que componen la comunidad y se hacen estudios con base en el DNA 16s ribosomal para identificar cada uno de los organismos, se ven las regiones variables B3, B4; se agrupan en OTU's de modo que den diferentes unidades y cuestiones.
+Podemos ir por vía de perfiles taxonómicos de las muestras, es saber quién compone y en qué proporción componen, es decir, las abundancias relativas. podemos hacer abundancias diferenciales en la composición de las muestras. Se puede hacer uso de log-fold-change y el fold change.
+El otro camino es saber las funciones de cada miembro que compone parte de la muestra. En este caso se hace mucho con funciones metabólicas asociadas. Ponemos funciones que puede que estén llevando a cabo las bacterias que tenemos en la muestra, por decir un ejemplo; entonces determinar las funciones que dan en el nicho.
+Los pasos, al igual que en los demás, debemos empezar cn el control de calidad de las secuencias. Hacemos calidad fret porque son archivos fastq. Realizamos el trimming y eliminamos de baja calidad y los primers. El siguiente paso es el Binning, OTUS. Binning es el proceso de agrupar los reads o contigs de los datos de secuenciación en unidades operacionales taxonómicas. un OTU es el nivel taxonómico que se usa y es definido opr los usuarios que describen un nivel de similaridad para clasificar microorganismos dentro del mismo o diferente OTU; aunque hoy en día se usa un amplicon sequence variance. Las lecturs van cayendo en los otus, no hacemos como por gen o así.
+
+## Microbioma
+Cabe resaltar que es el conjunto de genes de todos los microorganismos presentes; aunque a vaces también se refiere al número total de microorganismos que componen y su materail genético.
+
+## Microbiota
+Conjunto de microorganismos presentes en una muestra biológica. 
+
+### Microbial community
+Podemos usar perfiles de 16S para amplificar, secuenciar, formar los OTUs y ya poder hacer un perfil taxonómico o podemos hacer un WGS para hacer un perfil taxonómico y además poder inferir las funciones de los organismos.
+Cuando hacemos perfiles del gen 16S, tenemos regiones variables y conservadas y se usan para poder determinar nuestros OTUs y posteriormente identificar las identidades. Dentro del perfil taxonómico, otra opción es el Amplicon sequence variance.
+
+# Diversidades y coneptos
+1. Diversidad alfa: es la diversidad dentro de un área particular, esta medida se relaciona con el número de especies (riqueza de especies), o por uno o más de los múltiples índices de diversidad.
+2. Diversidad beta: es una *comparación* de la diversidad entre ecosistemas, usualmente medida como el cambio en la cantidad de especies entre ecosistemas.
+3. Diversidad gama: Es una medida de la diversidad *total* en una región más amplia.
+4. Riqueza: número de especies distintas en una delimitación geográfica.
+5. Singleton: Especie que, en una muestra, solo se contabiliza unindividuo.
+6. Número de individuos: Es la suma de los individuos en todas las especies en una delimitación geográfica.
+7. Índices de diversidad=/=diversidad.Hya muchos tipos de índices para poder determinar las diversidades, cada uno tiene vntajas y desventajas.
+
+## Índices de diversidad alfa
+Entropía de Shannon: menos número de especies, probabilidad de que sea la especie que determines, etc. Bajo índice señala menos diversidad, diversidad nula significa que solo hay una especie en el ambiente. Una diversidad máxima se muestra con una distribución uniforme, no domina una sola especie en el ambiente, es que la abundancia de cada especie es igual, se rpresentan de forma uniforme; en este caso es la diversidad máxima. Normalizar la diversidad de shannon es el número que sale de diversidad entre el máximo, que es log(N). Este índice mide equidad.
+$$D=$$
+Diversidad de Simpson: Calcula una dominancia, no equidad como en el de Shannon, cuando estamos en 0, no hay dominancia de especies; en caso inverso, el 1 representa que hay una especie dominante.
+$$D=1-\sum_{i=1} ^{N} P_{i}^{2} $$
+Donde $$$$
+Índice inverso de Simpson:
+
+## Curvas de abundancia/Curvas de Whittaker/Rank-abundance distributions
+Rankear con base en la abundancia de cada una de las especies, en este caso. Se grafica y se ordena con base en la abundancia, tal como lo dice el nombre. En el gráfico, la más abundante estará en un extremo, mientras que aquella que sea más rara estará del otro lado. De primera instacia podemos apreciar la riqueza, cada punto será una especie; mientras que si fijamos un punto arbitrario de corte, se pueden delimitar cuáles especies son raras debido a su baja abundancia. La dominancia igualmente puede ser visible con base en la propia curva de la gráfica, una especie dominante tendrá un pico muy alto que decrece su valor drásticamente al siguiente punto; igualmente en una alta diversidad, es decir, que no hay dominancia, la curva debe de ser horizontal o casi horizontal.
+
+## Medición de la diversidad
+Problemas de estmación de la diversidad: muestras. El problema de estimar es cómo saber dado que no podemos cuantificar y analizar cada objeto dentro de nuestra muestra. Se puede hacer una curva de rarefacción para estimar la riqueza que se tiene en una muestra/zona de muestreo
+
+## Diversidad beta
+Ya medimos las diversidades alfa, ahora queremos comparar. Podemos scar las medidas de distancia para poder coprar, es decir, comparar qué especies hay en una muestra y cuáles hay en otra; cuando son completamente diferentes, la distancia es igual a 1, mientras que si son iguales debe de ser igual a 0. Esto se puede calcular así.
+$$d_j(A,B)=1-J(A,B)=()/2$$
+Otro modo de medir estas comparaciones, es ya tener las tablas de abundancias relativas entre los sitios de interés y se hace un cálculo entre las abundancias relativas para obtener un número.
+Ínidice de Jaccard ((Di)Similaridad)
+
+## Phyloseq
+Son objetos complejos, pueden tener bastante información. Tiene varios datos dentro de si, es un objeto que se necesita la librería phyloseq; ya con este tipo de objetos se pueden hacer varios tipos de análisis. Se usa principalmente para determinación del micrbioma. En la página de phyloseq vienen varios tutoriales, desde sencillos a complejos. También checar el castro lab.
+Links de recursos: https://joey711.github.io/phyloseq/index.html , http://www.castrolab.org/post/bienvenidos-al-curso-precongreso-isme-la-2019/ , http://www.castrolab.org/isme/microbial_networks/microbial_networks.html

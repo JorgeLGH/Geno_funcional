@@ -1,0 +1,142 @@
+---
+title: "Examen parcial 3"
+author: "Jorge Gómez"
+date: "5/21/2021"
+output: html_document
+---
+# Primer ejercicio:
+1. Genera un programa en R que  a partir de los siguientes datos calcule para cada ecosistema (eco1,eco2,eco3) : la riqueza , diversidad alfa  con al menos tres subíndices, diversidad beta  con al menos un índice (https://stat.ethz.ch/R-manual/R-devel/library/base/html/sets.html) y una gŕafica de la abundancia ordenada de mayor a menor. No puedes usar librerías especializadas en ningún caso.
+
+Las siguientes líneas hacen objetos con el número de especies que se van a usar y los rangos en la abundancia que pueden estar cada una de las especies.
+```{r}
+#a<-numero_de_expedienteset.seed(a)#ni idea
+#corrección después de un rato
+a<-279466
+set.seed(a)#quizás afectaba algo, no sé
+#las siguientes líneas hacen objetos con el número de especies que se van a usar y los rangos en la abundancia que pueden estar cada una de las especies
+eco1<-sample(1:20, 200, replace=TRUE)
+eco2<-sample(1:400, 2000, replace=TRUE)
+eco3<-sample(1:100, 10000, replace=TRUE)
+```
+
+Para obtener las riquezas se puede realizar del siguiente modo.
+```{r}
+#solo requiero saber el número de especies, entonces con la longitud basta
+riq_1<-length(eco1)
+riq_2<-length(eco2)
+riq_3<-length(eco3)
+```
+
+Índice de Shannon.
+```{r}
+#me basé en la fórmula vista en clase y lo comparé con la función "dist"
+shan<-function(vc){
+  ff<-c()
+  ll<-c()
+  for (i in 1:length(vc)) {
+    ff[i]<- vc[i]/sum(vc)
+    ll[i]<- -(ff[i]*log(ff[i]))
+  }
+  kk<-sum(ll)
+  print(kk)
+}
+shan(eco1)
+shan(eco2)
+shan(eco3)
+```
+
+Índice de Simpson
+```{r}
+#me basé en la fórmula vista en clase y lo comparé con la función "dist"
+simpson.fun<-function(v){
+  rr<-c()
+  for (i in 1:length(v)) {
+    rr[i]<-(v[i]/sum(v))^2
+  }
+  ll<-sum(rr)
+  return(1-ll)
+}
+simpson.fun(eco1)
+simpson.fun(eco2)
+simpson.fun(eco3)
+```
+
+Índice de Simpson inverso
+```{r}
+#me basé en la fórmula vista en clase 
+simpson.inv<-function(v){
+  return(1/simpson.fun(v))
+}
+simpson.inv(eco1)
+simpson.inv(eco2)
+simpson.inv(eco3)
+```
+
+Índice de Jaccard para medir distancia
+```{r}
+#me basé en la fórmula vista en clase y con el link que venía adjunto en el examen
+jacc<-function(x,y){
+  (length(union(x,y))-length(setdiff(x,y)))/length(union(x,y))
+}
+jacc(eco1,eco2)
+jacc(eco1,eco3)
+jacc(eco2,eco2)
+```
+
+Gráfica de abundancia
+```{r}
+#no supe ponerle las líneas sin ggplot
+plot(sort(eco1,decreasing = T), type="p")
+plot(sort(eco2,decreasing = T), type="p")
+plot(sort(eco3,decreasing = T), type="p")
+```
+
+
+# Segundo ejericio:
+1. A partir de un objeto de tipo phyloseq generado de un análisis  de dentificación taxónomica  apartir del gen 16S ribosomal elabora un programa que
+
+1.1 Calcule distintas medidas de diversidad.
+
+1.2 Elabore una gráfica de barras de abundancias por muestras.
+
+1.3 Elabore un análisis de reducción de dimensionalidad.
+
+1.4  Muestre el microbioma core de las muestras.
+
+1.5 (Opcional) genere redes de co-abundacia por muestra.
+
+```{r}
+#cargar librerías
+library(phyloseq)
+library(Biostrings)
+library(ggplot2)
+#para el objeto phyloseq estoy partiendo del que obtuvimos de DADA2_Ejemplo_Clase
+#tuve que correr todo el script, entonces estoy partiendo de los objetos que se generaron
+#espero que no cuente como trampa usar lo que ya hicimos
+#adjunto link para mostrar que sé cómo llegar, pero es más fácil partir de lo que ya he hecho; sé que es una lata, pero requiere correr el script para tener los objetos y que corra esto; estuve en prueba y error y pues cuando cargas todo si sale ggg
+#https://github.com/JorgeLGH/ref.git
+
+#diversidades
+estimate_richness(ps)#pese a que dice estimar riqueza, nos da varios índices de diversidad alfa
+
+#gráfica de barras de abundancias
+plot_bar(ps.top20, x="Day", fill="Family") + facet_wrap(~When, scales="free_x")#ver código en link
+
+#reducir dimensiones
+ps.prop <- transform_sample_counts(ps, function(otu) otu/sum(otu))#ver código en link
+ord.nmds.bray <- ordinate(ps.prop, method="NMDS", distance="bray")
+
+#core de las muestras
+library(microbiome)
+ps.2 <- microbiome::transform(ps, "compositional")#transormación por abundancia relativa
+pseq.core <- core(ps.2, detection = 0.0001, prevalence = .5)#hago cortes subjetivos para definir muestras en core
+core.taxa <- taxa(pseq.core)#cuáles son los taxa en el core
+tax.mat <- tax_table(pseq.core)#viene la taxonomía del core, ya con clase, orden,etc
+tax.df <- as.data.frame(tax.mat)#ahora versión data frame
+tax.df$OTU <- rownames(tax.df)#agrego columna otu y agrego la id de la id de taxa (ASV)
+core.taxa.class <- dplyr::filter(tax.df, rownames(tax.df) %in% core.taxa)#se hace el filtrado de taxa que estén en tanto en tax.df y core.taxa
+knitr::kable(head(core.taxa.class))#una tabla agradable para ver el core
+```
+
+
+

@@ -1,0 +1,480 @@
+---
+title: "Single-cell RNA-seq"
+author: "Roberto Álvarez"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  prettydoc::html_pretty: 
+    fig_height: 8
+    fig_width: 13
+    number_sections: yes
+    theme: cayman
+    toc: yes
+---
+
+
+
+# La estructura de los datos
+
+Después de instalar hay que cargar las librerías para esta sesión. Roberto estuvo duro y dale que solo se necesita CARGAR, NO descargar si es que ya se tiene.
+
+```{r message=FALSE, warning=FALSE}
+library(SingleCellExperiment)
+```
+
+
+
+## Cargar los datos experimentales
+
+En esta parte simularemos tablas de cuentas de genes por célula. Las cuentas son el número de reads que cayeron directamente sobre nuestro transcrito de interés, en este caso los genes del 1 al 10 en nuestras muestras, es decir, las células.
+
+```{r}
+counts_matrix <- data.frame(cell_1 = rpois(10, 10), 
+                    cell_2 = rpois(10, 10), 
+                    cell_3 = rpois(10, 30))
+rownames(counts_matrix) <- paste0("gene_", 1:10)
+counts_matrix <- as.matrix(counts_matrix) # must be a matrix object!
+```
+
+
+1. Checar que se trate de un objeto tipo matriz. Respuesta: "matrix" "array", entonces se cumple que sea una matriz.
+2. ¿De qué dimesnión es? Respuesta: 10x3
+3. ¿Qué significan los renglones y que las columnas? Renglones: Es cada uno de los supuestos genes que estamos viendo en este ejemplo inventado para cada una de las células. Columnas: Cada una corresponde en este caso a una célula que en teoría se va a analalizar.
+4. ¿Qué hace la función `rpois()`? Respuesta: **Checar los videos de la tarea** (Genera )
+
+
+Para convertir esta matriz en un objeto de tipo *single cell experiment*  usamos la función del paquete que acabamos de cargar `SingleCellExperiment()`. Ya nos genera un objeto visualizable con información que podemos ir completando o ver qué viene dentro de este objeto y sus propiedades.
+
+```{r}
+sce <- SingleCellExperiment(assays = list(counts = counts_matrix))
+```
+
+
+Para visualizar la estructura de ese objeto podemos teclear el nombre que le asignamos o utilizar la función `str()`. Esta última función es más poderosa porque arroja más información pero , a menudo, es demasiada información para que uno pueda procesarla, entonces pues no es tan práctico su uso; al menos en la situación y nivel de compresión actuales..
+
+```{r}
+sce
+str(sce) 
+```
+
+
+Para acceder a las cuentas de los datos podemos utilizar dos funciones:  `assay(sce,c("counts"))` o simplemente `counts(sce)`. Realmente parece ser que no importa.
+
+```{r}
+counts(sce)
+```
+
+1. Utiliza la función  `assay(sce,c("counts"))` y describe lo que sale y las diferencias con la función `counts()`. Respuesta: No parece haber alguna en este ejemplo, al correr "assay(sce,c("counts"))==counts(sce)", todo sale como "TRUE".
+
+
+## Agregar más `assays`
+
+Esto puede ser útil, por ejemplo en una situación en donde podemos tener en un sólo objeto la versión cruda de los datos y la versión normalizada en el mismo, de tal forma que así no perdemos información.
+
+
+```{r}
+sce <- scater::logNormCounts(sce) #Compute log-transformed normalized expression values from a count matrix in a SingleCellExperiment object
+```
+
+
+Ahora vemos lo que sucede con el objeto.
+
+```{r}
+sce #check that now it says "assays(2): counts logcounts"
+```
+
+
+1. Compara qué sale en la parte de  `assays` con respecto al objeto original. Respuesta: Ahora viene que hay 2 assays, uno con el nombre del de counts con el que partimos, otro con la versión normalizada que recién se agregó; del mismo modo podemos visualizar los datos al igual que en el caso anterior.
+
+
+Si quisieramos acceder a estas últimas cuentas podemos usar la función `logcounts()`
+
+
+```{r}
+logcounts(sce)
+```
+
+
+
+Podemos ver específicamente  cuántos `assays` tiene el objeto `sce`
+
+
+```{r}
+assays(sce) #only says hoy many there are, but doesn´t show the data within each of them
+```
+
+Podemos hacer esta operación manual, es decir que no lo ha automático
+
+```{r}
+counts_100 <- counts(sce) + 100
+assay(sce, "counts_100") <- counts_100 # assign a new entry to assays slot, must be careful with the name, otherwise I'll be adding assays that I will not longer know in the future
+assays(sce) # new assay has now been added.
+```
+
+
+## Metadatos
+
+Todas las bases tienen metadatos. Los metadatos son toda aquella información adicional que nos permite interpretar los datos, por ejmplo, si la muestra viene de cierto tipo de pacientes: edad, género, condicón física, etc.
+
+
+### Por columnas
+
+```{r}
+cell_metadata <- data.frame(batch = c(1, 1, 2)) #check what does batch do in this particular case
+rownames(cell_metadata) <- paste0("cell_", 1:3)
+```
+
+
+
+```{r}
+sce <- SingleCellExperiment(assays = list(counts = counts_matrix),
+    colData = cell_metadata)
+```
+
+
+```{r}
+sce
+```
+
+
+
+
+
+
+```{r}
+colData(sce)
+```
+
+
+
+```{r}
+sce$batch
+```
+
+```{r}
+sce <- SingleCellExperiment(assays = list(counts = counts_matrix),
+    colData = cell_metadata)
+```
+
+
+
+```{r}
+sce <- SingleCellExperiment(assays = list(counts = counts_matrix),
+    colData = cell_metadata)
+```
+
+
+```{r}
+sce[,sce$batch==1]
+```
+
+
+
+### Por renglones
+
+
+
+
+```{r}
+rowRanges(sce)
+```
+
+
+
+```{r}
+sce <- scater::addPerFeatureQC(sce)
+rowData(sce)
+```
+
+
+
+```{r}
+library(AnnotationHub)
+#### OJO con esto va atardar un rato
+
+#edb <- AnnotationHub()[["AH73881"]] # Human, Ensembl v97.
+#genes(edb)[,2]
+```
+
+```{r}
+sce[c("gene_1", "gene_4"), ]
+```
+
+
+
+```{r}
+sce[c(1, 4), ] # same as above in this case
+```
+
+
+
+### Otro tipo de metadatos
+
+
+
+
+```{r}
+my_genes <- c("gene_1", "gene_5")
+metadata(sce) <- list(favorite_genes = my_genes)
+metadata(sce)
+```
+
+
+```{r}
+your_genes <- c("gene_4", "gene_8")
+metadata(sce)$your_genes <- your_genes
+metadata(sce)
+```
+
+
+
+## Campos específicos del objeto single-cell
+
+
+### Reducción de la dimesnionalidad
+
+```{r}
+sce <- scater::logNormCounts(sce)
+sce <- scater::runPCA(sce)
+reducedDim(sce, "PCA")
+```
+
+
+
+```{r}
+sce <- scater::runTSNE(sce, perplexity = 0.1)
+```
+
+
+
+```{r}
+reducedDim(sce, "TSNE")
+```
+
+
+
+```{r}
+reducedDims(sce)
+```
+
+
+```{r}
+u <- uwot::umap(t(logcounts(sce)), n_neighbors = 2)
+reducedDim(sce, "UMAP_uwot") <- u
+reducedDims(sce) # Now stored in the object.
+```
+
+
+```{r}
+reducedDim(sce, "UMAP_uwot") 
+```
+
+
+
+# Para lxs impacientes: scRNAseq en un sólo paso
+
+
+```{r}
+library(scRNAseq)
+sce <- MacoskoRetinaData()
+
+# Objeto pesado 
+
+# Quality control.
+library(scater)
+is.mito <- grepl("^MT-", rownames(sce))
+qcstats <- perCellQCMetrics(sce, subsets=list(Mito=is.mito))
+filtered <- quickPerCellQC(qcstats, percent_subsets="subsets_Mito_percent")
+sce <- sce[, !filtered$discard]
+
+# Normalization.
+sce <- logNormCounts(sce)
+
+# Feature selection.
+library(scran)
+dec <- modelGeneVar(sce)
+hvg <- getTopHVGs(dec, prop=0.1)
+
+# Dimensionality reduction.
+set.seed(1234)
+sce <- runPCA(sce, ncomponents=25, subset_row=hvg)
+sce <- runUMAP(sce, dimred = 'PCA', external_neighbors=TRUE)
+
+# Clustering.
+g <- buildSNNGraph(sce, use.dimred = 'PCA')
+colLabels(sce) <- factor(igraph::cluster_louvain(g)$membership)
+
+# Visualization.
+plotUMAP(sce, colour_by="label")
+```
+
+
+
+# Reducción de la dimensionalidad
+
+
+## PCA
+
+
+```{r}
+library(scRNAseq)
+sce.zeisel <- ZeiselBrainData()
+
+library(scater)
+sce.zeisel <- aggregateAcrossFeatures(sce.zeisel, 
+    id=sub("_loc[0-9]+$", "", rownames(sce.zeisel)))
+
+#--- gene-annotation ---#
+library(org.Mm.eg.db)
+rowData(sce.zeisel)$Ensembl <- mapIds(org.Mm.eg.db, 
+    keys=rownames(sce.zeisel), keytype="SYMBOL", column="ENSEMBL")
+
+#--- quality-control ---#
+stats <- perCellQCMetrics(sce.zeisel, subsets=list(
+    Mt=rowData(sce.zeisel)$featureType=="mito"))
+qc <- quickPerCellQC(stats, percent_subsets=c("altexps_ERCC_percent", 
+    "subsets_Mt_percent"))
+sce.zeisel <- sce.zeisel[,!qc$discard]
+
+#--- normalization ---#
+library(scran)
+set.seed(1000)
+clusters <- quickCluster(sce.zeisel)
+sce.zeisel <- computeSumFactors(sce.zeisel, cluster=clusters) 
+sce.zeisel <- logNormCounts(sce.zeisel)
+
+#--- variance-modelling ---#
+dec.zeisel <- modelGeneVarWithSpikes(sce.zeisel, "ERCC")
+top.hvgs <- getTopHVGs(dec.zeisel, prop=0.1)
+```
+
+
+```{r}
+BiocManager::install("PCAtools")
+```
+
+
+
+```{r}
+library(scran)
+top.zeisel <- getTopHVGs(dec.zeisel, n=2000)
+
+library(scater)
+set.seed(100) # See below.
+sce.zeisel <- runPCA(sce.zeisel, subset_row=top.zeisel) 
+reducedDimNames(sce.zeisel)
+```
+
+```{r}
+library(BiocSingular)
+set.seed(1000)
+sce.zeisel <- runPCA(sce.zeisel, subset_row=top.zeisel, 
+    BSPARAM=RandomParam(), name="IRLBA")
+reducedDimNames(sce.zeisel)
+```
+
+
+
+```{r}
+percent.var <- attr(reducedDim(sce.zeisel), "percentVar")
+plot(percent.var, log="y", xlab="PC", ylab="Variance explained (%)")
+```
+
+```{r}
+percent.var <- attr(reducedDim(sce.zeisel), "percentVar")
+chosen.elbow <- PCAtools::findElbowPoint(percent.var)
+chosen.elbow
+```
+
+
+```{r}
+plot(percent.var, xlab="PC", ylab="Variance explained (%)")
+abline(v=chosen.elbow, col="red")
+```
+
+
+
+```{r}
+# Creating a new entry with only the first 20 PCs, 
+# useful if we still need the full set of PCs later. 
+reducedDim(sce.zeisel, "PCA.elbow") <- reducedDim(sce.zeisel)[,1:chosen.elbow]
+reducedDimNames(sce.zeisel)
+```
+
+
+
+```{r}
+# Alternatively, just overwriting the original PCA entry. For demonstration
+# purposes, we'll do this to a copy so that we still have full PCs later on.
+sce.zeisel.copy <- sce.zeisel 
+reducedDim(sce.zeisel.copy) <- reducedDim(sce.zeisel.copy)[,1:chosen.elbow]
+ncol(reducedDim(sce.zeisel.copy))
+```
+
+```{r}
+plotReducedDim(sce.zeisel, dimred="PCA", colour_by="level1class")
+```
+
+```{r}
+plotReducedDim(sce.zeisel, dimred="PCA", ncomponents=4,
+    colour_by="level1class")
+```
+
+
+```{r}
+set.seed(00101001101)
+
+# runTSNE() stores the t-SNE coordinates in the reducedDims
+# for re-use across multiple plotReducedDim() calls.
+sce.zeisel <- runTSNE(sce.zeisel, dimred="PCA")
+plotReducedDim(sce.zeisel, dimred="TSNE", colour_by="level1class")
+```
+
+
+
+```{r}
+set.seed(100)
+sce.zeisel <- runTSNE(sce.zeisel, dimred="PCA", perplexity=5)
+out5 <- plotReducedDim(sce.zeisel, dimred="TSNE",
+    colour_by="level1class") + ggtitle("perplexity = 5")
+
+set.seed(100)
+sce.zeisel <- runTSNE(sce.zeisel, dimred="PCA", perplexity=20)
+out20 <- plotReducedDim(sce.zeisel, dimred="TSNE",
+    colour_by="level1class") + ggtitle("perplexity = 20")
+
+set.seed(100)
+sce.zeisel <- runTSNE(sce.zeisel, dimred="PCA", perplexity=80)
+out80 <- plotReducedDim(sce.zeisel, dimred="TSNE", 
+    colour_by="level1class") + ggtitle("perplexity = 80")
+
+gridExtra::grid.arrange(out5, out20, out80, ncol=3)
+```
+
+
+
+
+```{r}
+set.seed(1100101001)
+sce.zeisel <- runUMAP(sce.zeisel, dimred="PCA")
+plotReducedDim(sce.zeisel, dimred="UMAP", colour_by="level1class")
+```
+
+
+
+# Clusterización
+
+Por si no las tienen instaladas
+
+```{r}
+#BiocManager::install("DropletTestFiles")
+#BiocManager::install("DropletUtils")
+#BiocManager::install("EnsDb.Hsapiens.v86")
+```
+
+
+
+```{r}
+
+```
+
+
